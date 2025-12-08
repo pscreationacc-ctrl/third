@@ -543,9 +543,13 @@ dropdowns.forEach(dropdown => {
         const platform = dropdown.dataset.platform;
         const format = option.dataset.value;
 
+        // Update the hidden input fields with selected values
+        selectedPlatformInput.value = platform;
+        selectedFormatInput.value = format;
+
         previewArea.innerHTML= codeSnippets[platform][format];
         });
-    });  
+    });
 });
 
 </script>
