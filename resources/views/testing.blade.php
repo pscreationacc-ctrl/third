@@ -1,3 +1,18 @@
-<!-- Revive Adserver Asynchronous JS Tag - Generated with Revive Adserver v5.5.2 -->
-<ins data-revive-zoneid="1043" data-revive-id="5cd0105c73fe5cd9ab871d044bffb41a"></ins>
-<script async src="//adserver.brainfoodhosting.gr/www/delivery/asyncjs.php"></script>
+<input id="msg" placeholder="Type something">
+<button onclick="send()">Send</button>
+<div id="res"></div>
+
+<script>
+async function send() {
+    let msg = document.getElementById('msg').value;
+
+    let res = await fetch('/python', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}'},
+        body: JSON.stringify({message: msg})
+    });
+
+    let data = await res.json();
+    document.getElementById('res').innerText = data.reply;
+}
+</script>

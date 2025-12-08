@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use OpenAI;
 use App\Models\FeedsyncModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+
+
 
 class feedsyncController extends Controller
 {
@@ -67,4 +70,68 @@ public function delete($user_id)
         $data->save();
         return redirect()->back();
     }
+
+
+    public function stream(Request $request)
+    {
+        $client = OpenAI::client(env('OPENAI_API_KEY'));
+
+        return response()->stream(function () use ($client) {
+            $stream = $client->chat()->createStreamed([
+                'model' => 'gpt-3.5-turbo',
+                'messages' => [
+                    ['role' => 'user', 'content' => 'Γράψε μια ιστορία 50 λέξεων.'],
+                ],
+                // προαιρετικά: 'stream_options' => [ 'include_usage' => true ],
+            ]);
+
+            foreach ($stream as $chunk) {
+                // Κάθε chunk έχει νέο text
+                echo $chunk->choices[0]->delta->content ?? '';
+                ob_flush();
+                flush();
+            }
+        }, 200, [
+            'Content-Type' => 'text/event-stream',
+            'Cache-Control' => 'no-cache',
+            'X-Accel-Buffering' => 'no'
+        ]);
+    }
+
+ public function generate(Request $request)
+    {
+        $prompt = $request->input('message');
+
+        // Get the full path to the Python script
+        $scriptPath = base_path('test_model.py');
+
+        // Use the correct Python file name with full path and handle errors
+        $command = "python " . escapeshellarg($scriptPath) . " " . escapeshellarg($prompt);
+        $output = shell_exec($command . " 2>&1");
+        $output = trim($output);  // αφαιρεί κενά / newlines
+
+        // If output is empty, try alternative Python command
+        if (empty($output)) {
+            $command = "python " . escapeshellarg($scriptPath) . " " . escapeshellarg($prompt);
+            $output = shell_exec($command . " 2>&1");
+            $output = trim($output);
+        }
+
+        // Parse the JSON output from Python script
+        $responseData = json_decode($output, true);
+
+        if ($responseData && isset($responseData['reply'])) {
+            return response()->json(['reply' => $responseData['reply']]);
+        } else {
+            // Fallback to raw output if JSON parsing fails
+            return response()->json(['reply' => $output ?: "No response generated"]);
+        }
+
+
+    }
+
+public function testview(){
+return view('testing');
+}
+
 }

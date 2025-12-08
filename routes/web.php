@@ -30,5 +30,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/testing',[feedsyncController::class, 'test'])->name('testing');
     Route::get('/dashboard/learning',[feedsyncController::class, 'learning'])->name('learning');
     Route::get('/view',[feedsyncController::class, 'view'])->name('view');
-    
+    route::get('/stream',[feedsyncController::class, 'stream'])->name('stream');    
+    Route::post('/python', [feedsyncController::class, 'generate']);
+Route::get('/python', [feedsyncController::class, 'testview'])->name('python.view');
 require __DIR__.'/auth.php';
