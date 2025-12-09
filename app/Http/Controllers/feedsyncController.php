@@ -98,40 +98,50 @@ public function delete($user_id)
         ]);
     }
 
- public function generate(Request $request)
-    {
-        $prompt = $request->input('message');
+ public function ai(Request $request)
+{
+    $text = $request->input('message');
 
-        // Get the full path to the Python script
-        $scriptPath = base_path('test_model.py');
+    // Change to the correct directory where Modelfile.py is located
+    $command = "cd " . base_path('resources/model/mistral') . " && python Modelfile.py";
 
-        // Use the correct Python file name with full path and handle errors
-        $command = "python " . escapeshellarg($scriptPath) . " " . escapeshellarg($prompt);
-        $output = shell_exec($command . " 2>&1");
-        $output = trim($output);  // αφαιρεί κενά / newlines
+    $descriptorspec = [
+        0 => ["pipe", "r"],  // stdin
+        1 => ["pipe", "w"],  // stdout
+        2 => ["pipe", "w"]   // stderr
+    ];
 
-        // If output is empty, try alternative Python command
-        if (empty($output)) {
-            $command = "python " . escapeshellarg($scriptPath) . " " . escapeshellarg($prompt);
-            $output = shell_exec($command . " 2>&1");
-            $output = trim($output);
+    $process = proc_open($command, $descriptorspec, $pipes);
+
+    if (is_resource($process)) {
+        // Write input to the process
+        fwrite($pipes[0], $text);
+        fclose($pipes[0]);
+
+        // Read the output
+        $output = stream_get_contents($pipes[1]);
+        fclose($pipes[1]);
+
+        // Read any errors
+        $errors = stream_get_contents($pipes[2]);
+        fclose($pipes[2]);
+
+        // Close the process
+        proc_close($process);
+
+        if (!empty($errors)) {
+            return response()->json(['error' => 'Model execution failed: ' . $errors], 500);
         }
 
-        // Parse the JSON output from Python script
-        $responseData = json_decode($output, true);
-
-        if ($responseData && isset($responseData['reply'])) {
-            return response()->json(['reply' => $responseData['reply']]);
-        } else {
-            // Fallback to raw output if JSON parsing fails
-            return response()->json(['reply' => $output ?: "No response generated"]);
-        }
-
-
+        return response()->json(json_decode($output, true));
+    } else {
+        return response()->json(['error' => 'Failed to start model process'], 500);
     }
+}
+
 
 public function testview(){
-return view('testing');
+return view('python');
 }
 
 }

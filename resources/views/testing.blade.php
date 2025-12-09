@@ -6,7 +6,7 @@
 async function send() {
     let msg = document.getElementById('msg').value;
 
-    let res = await fetch('/python', {
+    let res = await fetch('python', {
         method: 'POST',
         headers: {'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}'},
         body: JSON.stringify({message: msg})
