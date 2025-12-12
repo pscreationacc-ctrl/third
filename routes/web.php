@@ -1,8 +1,11 @@
 <?php
 
+use App\Http\Controllers\crudcontroller;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\feedsyncController;
 use Illuminate\Support\Facades\Route;
+
+
 Route::get('/', function () {
     return view('welcome');
 });
@@ -32,5 +35,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/python', [feedsyncController::class, 'ai']);
     Route::get('/api/conversation-history', [feedsyncController::class, 'getConversationHistory']);
 });
+
+route::get('/test',[crudcontroller::class,'index']);
+route::post('/crudcreate',[crudcontroller::class,'crudcreate'])->name('crudcreate');
 
 require __DIR__.'/auth.php';
