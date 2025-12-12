@@ -76,13 +76,53 @@
 <div style="margin-top: 120px;">
     <h2 style="margin-bottom: 40px; text-align: center;">Feed History</h2>
 
-    @if($data->isEmpty())
+    <!-- Conversation History Section -->
+    <div style="margin-bottom: 50px;">
+        <h3 style="margin-bottom: 20px; text-align: center;">AI Conversation History</h3>
+
+        @if(isset($conversationHistory) && !$conversationHistory->isEmpty())
+            <div class="row g-3">
+                @foreach($conversationHistory as $conversation)
+                    <div class="col-md-6">
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+                                <h6 class="card-title text-primary">
+                                    Conversation - {{ $conversation->created_at->format('M d, Y H:i') }}
+                                </h6>
+                                <div style="margin-top: 15px;">
+                                    <strong>Question:</strong>
+                                    <p style="background-color: #f8f9fa; padding: 10px; border-radius: 5px; margin: 10px 0;">
+                                        {{ $conversation->question }}
+                                    </p>
+                                </div>
+                                <div style="margin-top: 15px;">
+                                    <strong>Response:</strong>
+                                    <p style="background-color: #e7f3ff; padding: 10px; border-radius: 5px; margin: 10px 0;">
+                                        {{ $conversation->response }}
+                                    </p>
+                                </div>
+                                <small class="text-muted">
+                                    Session: {{ $conversation->session_id }}
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        @else
+            <div class="alert alert-info text-center">
+                No conversation history found.
+            </div>
+        @endif
+    </div>
+
+    @if($feedsyncData->isEmpty())
         <div class="alert alert-info text-center">
             No feeds found.
         </div>
     @else
         <div class="row g-3">
-            @foreach($data as $item)
+            @foreach($feedsyncData as $item)
                 <div class="col-md-4">
                     <div class="card shadow-sm h-100">
                         <div class="card-body d-flex flex-column">

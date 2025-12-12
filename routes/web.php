@@ -15,8 +15,6 @@ Route::get('/public-video', [feedsyncController::class, 'publicVideo'])->name('p
 
 Route::middleware('auth')->group(function () {
 
-
-});
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -32,6 +30,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/view',[feedsyncController::class, 'view'])->name('view');
     route::get('/stream',[feedsyncController::class, 'stream'])->name('stream');    
     Route::post('/python', [feedsyncController::class, 'ai']);
-Route::get('/python', [feedsyncController::class, 'ai'])->name('python.view');
-route::get('/testview',[feedsyncController::class, 'testview'])->name('testview');
+    Route::get('/api/conversation-history', [feedsyncController::class, 'getConversationHistory']);
+});
+
 require __DIR__.'/auth.php';
