@@ -10,14 +10,32 @@ class crudcontroller extends Controller
 {
     public function index()
     {
-        return view('crudview');
+        $data = crudmodels::all();
+        return view('crudview', compact('data'));
     }
 
     public function crudcreate(request $request){
-        $data= new crudmodels;
+        $request->validate([
+            'name' => 'required|string|max:255'
+        ]);
 
-        $data->name= $request->name;
-        $data ->save();
-        return view('crudview',compact($data));
+        $data = new crudmodels;
+        $data->name = $request->name;
+        $data->save();
+
+        return redirect()->route('crud.index')->with('success', 'Entry created successfully!');
     }
+
+    public function crudgetedit(){
+        return view('crudedit');
+    }
+
+    public function crudedit(Request $request, $id){
+        $item= crudmodels::findOrFail($id);
+
+        $item ->update([
+            'name' => $request->name,
+        ]);
+    }
+
 }

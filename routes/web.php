@@ -10,9 +10,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+
 
 Route::get('/public-video', [feedsyncController::class, 'publicVideo'])->name('public.video');
 
@@ -31,12 +29,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/testing',[feedsyncController::class, 'test'])->name('testing');
     Route::get('/dashboard/learning',[feedsyncController::class, 'learning'])->name('learning');
     Route::get('/view',[feedsyncController::class, 'view'])->name('view');
-    route::get('/stream',[feedsyncController::class, 'stream'])->name('stream');    
+    route::get('/stream',[feedsyncController::class, 'stream'])->name('stream');
     Route::post('/python', [feedsyncController::class, 'ai']);
     Route::get('/api/conversation-history', [feedsyncController::class, 'getConversationHistory']);
 });
 
-route::get('/test',[crudcontroller::class,'index']);
-route::post('/crudcreate',[crudcontroller::class,'crudcreate'])->name('crudcreate');
+route::get('/test',[crudcontroller::class,'index'])->name('crud.index');
+route::post('/crudcreate',[crudcontroller::class,'crudcreate'])->name('crud.create');
+route::get('/test{id}/edit',[crudcontroller::class,'crudgetedit'])->name('crud.getedit');
+route::put('/test/{id}/edit',[crudcontroller::class,'crudedit'])->name('crud.edit');
 
 require __DIR__.'/auth.php';
