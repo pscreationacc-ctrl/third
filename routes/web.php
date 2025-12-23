@@ -36,7 +36,8 @@ Route::middleware('auth')->group(function () {
 
 route::get('/test',[crudcontroller::class,'index'])->name('crud.index');
 route::post('/crudcreate',[crudcontroller::class,'crudcreate'])->name('crud.create');
-route::get('/test{id}/edit',[crudcontroller::class,'crudgetedit'])->name('crud.getedit');
+route::get('/test/{id}/edit',[crudcontroller::class,'crudgetedit'])->name('crud.getedit');
 route::put('/test/{id}/edit',[crudcontroller::class,'crudedit'])->name('crud.edit');
+route::delete('/test/{id}/edit',[crudcontroller::class,'cruddelete'])->name('crud.delete');
 
 require __DIR__.'/auth.php';

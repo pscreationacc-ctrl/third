@@ -89,6 +89,9 @@
         }
     </style>
 </head>
+@foreach ($info as $data)
+
+@endforeach
 <body class="bg-gray-50 min-h-screen">
     <!-- Header with Gradient -->
     <div class="gradient-bg text-white py-8 shadow-xl">
@@ -336,6 +339,7 @@
 
             nameInput.addEventListener('input', updateCharCount);
             updateCharCount(); // Initial count
+            @endif
         }
     </script>
 </body>

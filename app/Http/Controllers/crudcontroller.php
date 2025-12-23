@@ -27,7 +27,8 @@ class crudcontroller extends Controller
     }
 
     public function crudgetedit(){
-        return view('crudedit');
+        $info = crudmodels::all();
+        return view('crudedit', compact('info'));
     }
 
     public function crudedit(Request $request, $id){
@@ -36,6 +37,13 @@ class crudcontroller extends Controller
         $item ->update([
             'name' => $request->name,
         ]);
+            return redirect(route('crud.index'));
+    }
+
+    public function cruddelete($id){
+        $item= crudmodels::findOrFail($id);
+        $item->delete();
+        return redirect(route('crud.index'));
     }
 
 }
